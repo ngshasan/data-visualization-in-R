@@ -1,0 +1,787 @@
+---
+title: "Data Visualization in R"
+author: "Mehadi Hasan"
+date: "2025-04-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+# Install and load gapminder R Package
+```{r}
+#install.packages("gapminder")
+library("gapminder")
+library("tidyverse")
+```
+
+# Execute the script to get the beautiful scatter plot
+```{r}
+gapminder_filtered <- gapminder |>
+  filter(year == 2007)
+
+ggplot(data = gapminder_filtered,
+       mapping = aes(x = gdpPercap, y = lifeExp, 
+                     size = pop, color = continent)) +
+  geom_point() + 
+  scale_x_log10(labels = scales::dollar_format(accuracy = 1)) +
+  scale_size_continuous(labels = scales::label_comma()) +
+  scale_color_viridis_d(option = "plasma") +
+  labs(x = "GDP per capita", y = "Life expectancy",
+       title = "Health and wealth are strongly related",
+       subtitle = "142 countries; 2007 only", caption = "Source: The Gapminder Project",
+       color = "Continent", size = "Population") +
+  theme_bw()
+```
+
+# Plotting with tidyheatmaps
+```{r}
+library(tidyheatmaps)
+
+tidyheatmap(df = data_exprs,
+            rows = external_gene_name,
+            columns = sample,
+            values = expression,
+            scale = "row",
+            annotation_col = c(sample_type, condition, group),
+            annotation_row = c(is_immune_gene, direction),
+            gaps_row = direction,
+            gaps_col = group
+)
+```
+
+# Plotting with tidyplots
+```{r}
+#install.packages("tidyplots")
+library("tidyplots")
+#install.packages("tidyplots")
+library(tidyplots)
+library(kableExtra)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+```
+
+# Load study data
+```{r}
+study
+```
+
+```{r}
+study |> 
+  tidyplot(x = treatment, y = score) |> 
+  add_data_points() |> 
+  add_mean_bar(alpha = 0.5)
+```
+
+```{r}
+study |> 
+  tidyplot(x = treatment, y = score, color = treatment) |> 
+  add_data_points() |> 
+  add_mean_bar(alpha = 0.4) |> 
+  add_sem_errorbar()
+```
+
+# Another common adjustment is to change the titles of the plot, axes, or legend. For this we will use the function adjust_title() and friends.
+```{r}
+study |> 
+  tidyplot(x = treatment, y = score, color = treatment) |> 
+  add_data_points() |> 
+  add_mean_bar(alpha = 0.4) |> 
+  add_sem_errorbar() |> 
+  adjust_title("This is my fantastic plot title") |>
+  adjust_x_axis_title("Treatment group") |>
+  adjust_y_axis_title("Disease score") |>
+  adjust_legend_title("") |>
+  adjust_caption("Here goes the caption")
+```
+
+
+# Split the plots
+```{r}
+study |> 
+  tidyplot(x = group, y = score, color = group) |> 
+  add_data_points() |> 
+  add_sem_errorbar() |> 
+  add_mean_dash() |> 
+  adjust_size(width = 30, height = 25) |> 
+  split_plot(by = dose)
+```
+
+                                
+                                    *1-Gallery*
+                                    
+```{r}
+eu_countries |>
+  tidyplot(x = area, y = population) |>
+  add_reference_lines(x = 2.5e5, y = 30) |>
+  add_data_points(white_border = TRUE)
+```
+
+```{r}
+energy |>
+  dplyr::filter(year >= 2008) |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_barstack_relative()
+```
+
+```{r}
+study |>
+  tidyplot(x = treatment, y = score, color = treatment) |>
+  add_mean_dot(size = 2.5) |>
+  add_mean_bar(width = 0.03) |>
+  add_mean_value()
+```
+
+
+```{r}
+library(tidyplots)
+
+study |> 
+  tidyplot(x = treatment, y = score, color = treatment) |> 
+  add_mean_bar(alpha = 0.4) |> 
+  add_sem_errorbar() |> 
+  add_data_points_beeswarm()
+```
+
+```{r}
+study |>
+  tidyplot(x = group, y = score, color = dose) |>
+  add_mean_bar(alpha = 0.3) |>
+  add_sem_errorbar() |>
+  add_data_points() |>
+  add_test_asterisks(hide_info = TRUE)
+```
+
+```{r}
+time_course |>
+  tidyplot(x = day, y = score, color = treatment, dodge_width = 0) |>
+  add_mean_line() |>
+  add_sem_ribbon()
+```
+
+```{r}
+energy_week |>
+  tidyplot(x = date, y = power, color = energy_source) |>
+  add_areastack_absolute()
+```
+
+```{r}
+study |>
+  tidyplot(x = treatment, y = score, color = treatment) |>
+  add_violin() |>
+  add_data_points_beeswarm()
+```
+
+```{r}
+energy |>
+  tidyplot(y = energy, color = energy_source) |>
+  add_donut()
+```
+
+```{r}
+climate |>
+  tidyplot(x = month, y = max_temperature, dodge_width = 0) |>
+  add_mean_line(group = year, alpha = 0.08) |>
+  add_mean_line() |>
+  adjust_x_axis(rotate_labels = 90)
+```
+
+```{r}
+study |>
+  tidyplot(x = score, y = treatment, color = treatment) |>
+  add_mean_bar(alpha = 0.3) |>
+  add_sem_errorbar() |>
+  add_data_points()
+```
+
+```{r}
+climate |>
+  tidyplot(x = month, y = year, color = max_temperature) |>
+  add_heatmap()
+```
+
+```{r}
+energy_week |>
+  tidyplot(x = date, y = power, color = energy_source) |>
+  add_areastack_relative()
+```
+
+```{r}
+time_course |>
+  tidyplot(x = day, y = score, color = treatment, dodge_width = 0) |>
+  add_mean_line() |>
+  add_mean_dot(size = 1) |>
+  add_sem_errorbar(width = 2)
+```
+
+```{r}
+energy |>
+  dplyr::filter(year >= 2008) |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_barstack_absolute()
+```
+
+                                *2-Proportional data*
+Bars
+```{r}
+energy |>
+  tidyplot(x = energy, y = energy_source, color = energy_source) |>
+  add_sum_bar() |> 
+  remove_legend()
+```
+
+Barstack
+```{r}
+energy |>
+  tidyplot(y = energy, color = energy_source) |>
+  add_barstack_absolute()
+```
+
+Pie
+```{r}
+energy |>
+  tidyplot(y = energy, color = energy_source) |>
+  add_pie()
+```
+
+Donut
+```{r}
+energy |>
+  tidyplot(y = energy, color = energy_source) |>
+  add_donut()
+```
+
+Barstack absolute
+```{r}
+energy |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_barstack_absolute()
+```
+
+Barstack relative
+```{r}
+energy |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_barstack_relative()
+```
+
+Areastack absolute
+```{r}
+energy |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_areastack_absolute()
+```
+
+Areastack relative
+```{r}
+energy |>
+  tidyplot(x = year, y = energy, color = energy_source) |>
+  add_areastack_relative()
+```
+
+
+                                *3-Bioinformatics*
+
+Principal component plot
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/pca-plot.csv")
+
+df |> 
+  tidyplot(x = pc1, y = pc2, color = group) |> 
+  add_data_points(size = 1.3, white_border = TRUE) |> 
+  adjust_x_axis_title(paste0("Component 1 (", format_number(df$pc1_var*100), "%)")) |> 
+  adjust_y_axis_title(paste0("Component 2 (", format_number(df$pc2_var*100), "%)")) |> 
+adjust_colors(colors_discrete_apple) |> 
+  adjust_legend_title("Group")
+```
+
+Correlation
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/correlation-matrix.csv")
+
+df |> 
+  tidyplot(x = x, y = y, color = correlation) |> 
+  add_heatmap() |> 
+  sort_x_axis_labels(order_x) |> 
+  sort_y_axis_labels(order_y) |> 
+  remove_x_axis() |> 
+  remove_y_axis() |> 
+  remove_legend_title() |> 
+  adjust_legend_position("right") |> 
+  adjust_colors(colors_continuous_inferno) |> 
+  adjust_theme_details(legend.key.height = unit(1, "null")) |> 
+  add_caption("Data source: Spellman PT, et al. 1998. Mol Biol Cell 9(12): 3273-97.")
+```
+
+Volcano Plot
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/differential-expression-analysis.csv") |> 
+  mutate(
+    neg_log10_padj = -log10(padj),
+    direction = if_else(log2FoldChange > 0, "up", "down", NA),
+    candidate = abs(log2FoldChange) >= 1 & padj < 0.05
+    )
+
+df |> 
+  tidyplot(x = log2FoldChange, y = neg_log10_padj) |> 
+  add_data_points(data = filter_rows(!candidate),
+                  color = "lightgrey", rasterize = TRUE) |> 
+  add_data_points(data = filter_rows(candidate, direction == "up"),
+                  color = "#FF7777", alpha = 0.5) |> 
+  add_data_points(data = filter_rows(candidate, direction == "down"),
+                  color = "#7DA8E6", alpha = 0.5) |> 
+  add_reference_lines(x = c(-1, 1), y = -log10(0.05)) |> 
+  add_data_labels_repel(data = min_rows(padj, 6, by = direction), label = external_gene_name,
+                        color = "#000000", min.segment.length = 0, background = TRUE) |> 
+  adjust_x_axis_title("$Log[2]~fold~change$") |> 
+  adjust_y_axis_title("$-Log[10]~italic(P)~adjusted$")
+```
+
+
+```{r}
+kable(df[1:3,11:14])
+```
+
+Volcano Plot- from real lab data
+```{r}
+# Ensure the necessary libraries are loaded
+library(tidyverse)
+library(tidyplots)
+library(ggplot2)
+
+df=resdata
+# Convert it to a Tibble data
+library(tidyverse)  # Loads dplyr and tibble
+
+# Convert it to a Tibble data
+df <- as_tibble(df)
+
+# Prepare your data
+df <- df |> 
+  filter(!is.na(padj), !is.na(log2FoldChange)) |> 
+  mutate(
+    # Avoid log10(0) by setting padj = 1e-16 if padj is 0
+    padj = if_else(padj == 0, 1e-16, padj),
+    
+    # Create neg_log10_padj column
+    neg_log10_padj = -log10(padj),
+    
+    # Categorize log2FoldChange as "up" or "down"
+    direction = case_when(
+      log2FoldChange > 0 ~ "up",
+      log2FoldChange < 0 ~ "down",
+      TRUE ~ NA_character_
+    ),
+    
+    # Flag candidates with |log2FoldChange| ≥ 1 and padj < 0.05
+    candidate = abs(log2FoldChange) >= 1 & padj < 0.05
+  )
+
+# Check the first few rows to ensure the columns were created
+head(df)
+```
+
+  23456
+#(log2FoldChange) >= 1 # when FC=2
+#(log2FoldChange) >= 0.60 # when FC=1.5
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+png("/home/mehadi/bioinformatics/ngshasan/data-visualization-tidyplot/volcano_plot.png", width = 1600, height = 1200)
+
+plot_result <- resdata |> 
+  mutate(
+    neg_log10_padj = -log10(padj),
+    direction = if_else(log2FoldChange > 0, "up", "down", NA),
+    candidate = abs(log2FoldChange) >= 1 & padj < 0.05
+    )
+
+df |> 
+  tidyplot(x = log2FoldChange, y = neg_log10_padj) |> 
+  add_data_points(data = filter_rows(!candidate),
+                  color = "lightgrey", rasterize = TRUE) |> 
+  add_data_points(data = filter_rows(candidate, direction == "up"),
+                  color = "#FF7777", alpha = 0.5) |> 
+  add_data_points(data = filter_rows(candidate, direction == "down"),
+                  color = "#7DA8E6", alpha = 0.5) |> 
+  add_reference_lines(x = c(-1, 1), y = -log10(0.05)) |> 
+  add_data_labels_repel(data = min_rows(padj, 6, by = direction), label = symbol,
+                        color = "#000000", min.segment.length = 0, background = TRUE) |> 
+  adjust_x_axis_title("$Log[2]~fold~change$") |> 
+  adjust_y_axis_title("$-Log[10]~italic(P)~adjusted$") 
+
+# Use print() to render the plot
+print(plot_result)
+
+dev.off()  # Close the graphics device
+```
+
+# check the range
+```{r}
+# Check range of values for log2FoldChange and neg_log10_padj
+range(df$log2FoldChange, na.rm = TRUE)
+range(df$neg_log10_padj, na.rm = TRUE)
+```
+
+# missing values
+```{r}
+# Check for missing values in key columns
+sum(is.na(df$log2FoldChange))
+sum(is.na(df$neg_log10_padj))
+```
+
+```{r}
+png("/home/mehadi/bioinformatics/ngshasan/data-visualization-tidyplot/volcano_plot2.png", width = 1600, height = 1200)
+
+# If you're removing rows with NA values in neg_log10_padj
+df_clean <- df |> 
+  filter(!is.na(neg_log10_padj))
+
+# If you're replacing NA values with 0
+# df$neg_log10_padj[is.na(df$neg_log10_padj)] <- 0
+
+df_clean |> 
+  tidyplot(x = log2FoldChange, y = neg_log10_padj) |> 
+  add_data_points(data = filter_rows(!candidate),
+                  color = "lightgrey", rasterize = TRUE) |> 
+  add_data_points(data = filter_rows(candidate, direction == "up"),
+                  color = "#FF7777", alpha = 0.5) |> 
+  add_data_points(data = filter_rows(candidate, direction == "down"),
+                  color = "#7DA8E6", alpha = 0.5) |> 
+  add_reference_lines(x = c(-1, 1), y = -log10(0.05)) |> 
+  add_data_labels_repel(data = min_rows(padj, 6, by = direction), label = symbol,
+                        color = "#000000", min.segment.length = 0, background = TRUE) |> 
+  adjust_x_axis_title("$Log[2]~fold~change$") |> 
+  adjust_y_axis_title("$-Log[10]~italic(P)~adjusted$") |> 
+  scale_x_continuous(limits = c(-10, 10)) |>    # Adjust limits for x-axis
+  scale_y_continuous(limits = c(0, 20))         # Adjust limits for y-axis
+
+# Use print() to render the plot
+print(plot_result)
+
+dev.off()  # Close the graphics device
+```
+
+
+===============================================================================
+
+
+Microbiome composition
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/microbiota.csv") |> 
+  mutate(genus = fct_inorder(genus),
+         sample = fct_reorder(sample, top, .desc = TRUE))
+
+df |>
+  tidyplot(x = sample, y = rel_abundance, color = genus) |>
+  add_areastack_absolute(alpha = 0.6) |>
+  add_caption("Data source: Tamburini FB, et al. 2022. Nat Comm 13, 926.") |>
+  adjust_theme_details(legend.key.height = unit(3.4, "mm")) |> 
+  adjust_theme_details(legend.key.width = unit(3.4, "mm")) |> 
+  adjust_x_axis_title("Sample") |> 
+  adjust_y_axis_title("Relative abundance") |> 
+  remove_x_axis_labels() |>
+  remove_x_axis_ticks() |>
+  remove_legend_title()
+```
+
+Gene expression-Heatmap
+```{r}
+gene_expression |> 
+  tidyplot(x = sample, y = external_gene_name, color = expression) |> 
+  add_heatmap(scale = "row") |>
+  adjust_size(height = 100) |> 
+  sort_y_axis_labels(direction, -padj) |> 
+  adjust_theme_details(legend.key.height = unit(1, "null")) |> 
+  adjust_legend_title("Row Z-score") |> 
+  remove_x_axis_title() |> 
+  remove_y_axis_title()
+```
+
+```{r}
+ge=gene_expression
+kable(ge[1:3,10:11])
+```
+
+Hypothesis testing
+```{r}
+library(tidyverse)
+
+gene_expression |> 
+  filter(external_gene_name %in% c("Apol6", "Col5a3", "Bsn", "Fam96b", "Mrps14", "Tma7")) |> 
+  tidyplot(x = sample_type, y = expression, color = condition) |> 
+  add_violin() |> 
+  add_data_points_beeswarm(white_border = TRUE) |> 
+  adjust_x_axis_title("") |> 
+  remove_legend() |> 
+  add_test_asterisks(hide_info = TRUE, bracket.nudge.y = 0.3) |> 
+  adjust_colors(colors_discrete_ibm) |> 
+  adjust_y_axis_title("Gene expression") |> 
+  split_plot(by = external_gene_name, ncol = 2)
+```
+Read alignment
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- read_csv("https://tidyplots.org/data/sequencing-qc-STAR.csv")
+
+my_colors <- c("Uniquely mapped" = "#437bb1",
+               "Mapped to multiple loci" = "#7cb5ec",
+               "Mapped to too many loci" = "#f7a35c",
+               "Unmapped: too short" = "#b1084c",
+               "Unmapped: other" = "#7f0000")
+
+df |>
+  tidyplot(x = reads, y = sample, color = category) |>
+  add_barstack_absolute(reverse = TRUE) |>
+  theme_minimal_x() |>
+  adjust_size(70, 50) |>
+  adjust_colors(my_colors) |>
+  adjust_x_axis(title = "Number of reads", cut_short_scale = TRUE) |>
+  reorder_color_labels(names(my_colors)) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+Read alignment, relative
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- read_csv("https://tidyplots.org/data/sequencing-qc-STAR.csv")
+
+my_colors <- c("Uniquely mapped" = "#437bb1",
+               "Mapped to multiple loci" = "#7cb5ec",
+               "Mapped to too many loci" = "#f7a35c",
+               "Unmapped: too short" = "#b1084c",
+               "Unmapped: other" = "#7f0000")
+
+df |>
+  tidyplot(x = reads, y = sample, color = category) |>
+  add_barstack_relative(reverse = TRUE) |>
+  theme_minimal_x() |>
+  adjust_size(70, 50) |>
+  adjust_colors(my_colors) |>
+  adjust_x_axis(title = "Percentage of reads", labels = scales::percent) |> 
+  reorder_color_labels(names(my_colors)) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+Feature counts
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- read_csv("https://tidyplots.org/data/sequencing-qc-featureCounts.csv")
+
+my_colors <- c("Assigned" = "#7cb5ec",
+               "Unassigned_Ambiguity" = "#434348",
+               "Unassigned_MultiMapping" = "#90ed7d",
+               "Unassigned_NoFeatures" = "#f7a35c")
+
+df |>
+  tidyplot(x = reads, y = sample, color = category) |>
+  add_barstack_absolute(reverse = TRUE) |>
+  theme_minimal_x() |>
+  adjust_size(70, 50) |>
+  adjust_colors(my_colors) |>
+  adjust_x_axis(title = "Number of reads", cut_short_scale = TRUE) |>
+  reorder_color_labels(names(my_colors)) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+Feature counts, relative
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- read_csv("https://tidyplots.org/data/sequencing-qc-featureCounts.csv")
+
+my_colors <- c("Assigned" = "#7cb5ec",
+               "Unassigned_Ambiguity" = "#434348",
+               "Unassigned_MultiMapping" = "#90ed7d",
+               "Unassigned_NoFeatures" = "#f7a35c")
+
+df |>
+  tidyplot(x = reads, y = sample, color = category) |>
+  add_barstack_relative(reverse = TRUE) |>
+  theme_minimal_x() |>
+  adjust_size(70, 50) |>
+  adjust_colors(my_colors) |>
+  adjust_x_axis(title = "Percentage of reads", labels = scales::percent) |> 
+  reorder_color_labels(names(my_colors)) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+
+                                *4-Data journalism*
+
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/sales-of-cigarettes-per-adult-per-day.csv") |> 
+  mutate(
+    cigarettes = `Manufactured cigarettes sold per adult per day`,
+    Entity = fct_relevel(Entity, "France", "Germany", "United States"),
+    Entity = fct_rev(Entity)
+    )
+
+df |> 
+  tidyplot(x = Year, y = cigarettes, color = Entity) |> 
+  add_mean_line(linewidth = 0.5) |> 
+  add_title("Sales of cigarettes per adult per day") |> 
+  add_caption("Data source: Our World in Data") |> 
+  theme_minimal_y() |> 
+  adjust_y_axis(limits = c(0,11)) |> 
+  adjust_size(100, 50) |> 
+  adjust_colors(c(
+    "France" = "#F6C54D",
+    "Germany" = "#C02D45",
+    "United States" = "#4DACD6"
+    ), na.value = "lightgrey") |> 
+  adjust_legend_position("top") |> 
+  adjust_title(fontsize = 14) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv2("https://tidyplots.org/data/countries-democracies-autocracies.csv") |> 
+  pivot_longer(ends_with("acies"), names_to = "type", values_to = "number")
+
+df |> 
+  tidyplot(x = Year, y = number, color = type) |> 
+  add_areastack_relative() |> 
+  add_title("Countries by system of government") |> 
+  add_caption("Data source: Our World in Data") |> 
+  theme_minimal_y() |> 
+  adjust_size(100, 50) |> 
+  adjust_colors(c(
+    "Closed autocracies" = "#E2514E",
+    "Electoral autocracies" = "#F1B075",
+    "Electoral democracies" = "#8BB7C6",
+    "Liberal democracies" = "#5C95C5")) |> 
+  adjust_title(fontsize = 14) |> 
+  adjust_legend_position("top") |> 
+  adjust_theme_details(legend.key.height = unit(2, "mm")) |> 
+  adjust_theme_details(legend.key.width = unit(2, "mm")) |> 
+  adjust_y_axis(labels = scales::percent) |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/electricity-generation-in-Germany.csv")
+
+my_colors <- c("Renewable" = "#4FAE62",
+               "Nuclear" = "#F6C54D",
+               "Fossil" = "#CCCCCC",
+               "Other" = "#888888")
+
+df |> 
+  dplyr::filter(year %in% c(2003, 2013, 2023)) |> 
+  tidyplot(y = energy, color = energy_type) |> 
+  add_donut() |> 
+  adjust_colors(my_colors) |>
+  reorder_color_labels(names(my_colors)) |> 
+  remove_legend_title() |> 
+  split_plot(by = year, ncol = 3, widths = 35, heights = 35) &
+  theme(legend.position = "bottom") &
+  patchwork::plot_annotation(
+    title = "Electricity generation in Germany",
+    caption = "Data source: energy-charts.info",
+    theme = theme(plot.title = element_text(hjust = 0.5, size = 14),
+                  plot.caption = element_text(size = 6))
+    )
+```
+
+
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+df <- 
+  read_csv("https://tidyplots.org/data/electricity-generation-in-Germany.csv")
+
+my_colors <- c("Renewable" = "#4FAE62",
+               "Nuclear" = "#F6C54D",
+               "Fossil" = "#CCCCCC",
+               "Other" = "#888888")
+
+df |> 
+  tidyplot(x = year, y = energy, color = energy_type) |> 
+  add_barstack_absolute() |> 
+  add_title("Electricity generation in Germany (TWh)") |> 
+  add_caption("Data source: energy-charts.info") |> 
+  theme_minimal_y() |> 
+  adjust_size(100, 50) |> 
+  adjust_colors(my_colors) |> 
+  adjust_legend_position("top") |> 
+  adjust_title(fontsize = 14) |> 
+  adjust_x_axis_title("Year") |> 
+  remove_legend_title() |> 
+  remove_y_axis_title()
+```
+
+```{r}
+library(tidyverse)
+library(tidyplots)
+
+countries <- c("France", "Germany", "United States", "China", "World", "Norway")
+
+df <- 
+  read_csv("https://tidyplots.org/data/energy-use-per-person.csv") |> 
+  mutate(
+    energy = `Primary energy consumption per capita (kWh/person)`
+    ) |> 
+  filter(Entity %in% countries)
+
+df |> 
+  tidyplot(x = Year, y = energy, color = Entity) |> 
+  add_mean_line(linewidth = 0.5) |> 
+  add_data_points(data = filter_rows(Year == 2023)) |> 
+  add_data_labels_repel(label = Entity, data = filter_rows(Year == 2023), background = TRUE, background_alpha = 1, nudge_x = 11, direction = "y", force_pull = 0, hjust = 0) |> 
+  add_title("Energy consumption per capita (kWh)") |> 
+  add_caption("Data source: Our World in Data") |> 
+  theme_minimal_y() |> 
+  adjust_padding(right = 0.07) |> 
+  adjust_y_axis(limits = c(0, 1.4e5), cut_short_scale = TRUE) |> 
+  adjust_size(100, 50) |> 
+  adjust_title(fontsize = 14) |> 
+  adjust_colors(colors_discrete_seaside) |> 
+  sort_color_labels() |> 
+  remove_legend() |> 
+  remove_y_axis_title()
+```
+
