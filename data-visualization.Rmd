@@ -37,6 +37,7 @@ ggplot(data = gapminder_filtered,
   theme_bw()
 ```
 
+
 # Plotting with tidyheatmaps
 ```{r}
 library(tidyheatmaps)
@@ -753,6 +754,7 @@ df |>
   remove_legend_title() |> 
   remove_y_axis_title()
 ```
+
 
 ```{r}
 library(tidyverse)
